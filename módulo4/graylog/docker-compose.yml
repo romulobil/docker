@@ -1,0 +1,23 @@
+version: "3.9"
+
+services:
+  nginx_syslog:
+    image: nginx:alpine
+    container_name: "nginx_syslog"
+    ports:
+      - 80:80
+    logging:
+      driver: syslog
+      options:
+        syslog-format: "rfc3164"
+        tag: "nginx_syslog"
+
+  nginx_graylog:
+    image: nginx:alpine
+    container_name: "nginx_graylog"
+    ports:
+      - 8080:80
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://127.0.0.1:12201"
