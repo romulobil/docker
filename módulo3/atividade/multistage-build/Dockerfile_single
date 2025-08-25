@@ -1,0 +1,23 @@
+# Utiliza a imagem base do Go 1.20.3 para construir o programa
+FROM golang:1.20.3-alpine3.17
+
+# Define o diretório de trabalho dentro do container
+WORKDIR /app
+
+# Copia todos os arquivos do diretório atual para o diretório de trabalho no container
+COPY . ./
+
+# Compila o código Go e cria o executável chamado "app"
+RUN go build -o app main.go
+
+# Define uma variável de ambiente chamada "MESSAGE"
+ENV MESSAGE "Hello from Docker!"
+
+# Define uma variável de ambiente chamada "PORT"
+ENV PORT 8080
+
+# Expõe a porta 8080 para que possa ser acessada fora do container
+EXPOSE 8080
+
+# Define o comando padrão a ser executado quando o container for iniciado
+CMD ["./app"]
