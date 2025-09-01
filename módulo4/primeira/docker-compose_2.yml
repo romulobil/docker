@@ -1,19 +1,11 @@
----
-version: '3'
 services:
   web:
     build: .
     ports:
-      - "5000:5000"
-    environment:
-      - "FLASK_ENV=development"
-      - "REDIS_HOST=redis"
-      - "REDIS_PORT=6379"
+      - '8080:8080'
   redis:
-    image: "redis:alpine"
+    image: 'redis:7.0.11-alpine3.17'
     volumes:
-      - "redis:/data"
-    command: ["redis-server", "--appendonly", "yes"]
-
+      - redis-data:/data
 volumes:
-  redis: 
+  redis-data:
