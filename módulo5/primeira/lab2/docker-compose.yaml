@@ -1,0 +1,13 @@
+services:
+  node:
+    build: app
+
+  nginx_lb:
+    image: nginx:alpine
+    container_name: nginx_lb
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - node
+    ports: 
+      - 80:80
