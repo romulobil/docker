@@ -1,23 +1,17 @@
-import time
-import redis
-import os
 from flask import Flask
+import os
+import redis
 
 app = Flask(__name__)
-cache = redis.Redis(host=os.environ["REDIS_HOST"], port=os.environ["REDIS_PORT"])
+redis_host = os.environ.get("REDIS_HOST", "localhost")
+redis_port = int(os.environ.get("REDIS_PORT", 6379))
 
-def get_hit_count():
-    retries = 5
-    while True:
-        try:
-            return cache.incr('hits')
-        except redis.exceptions.ConnectionError as exc:
-            if retries == 0:
-                raise exc
-            retries -= 1
-            time.sleep(0.5)
+cache = redis.Redis(host=redis_host, port=redis_port)
 
 @app.route('/')
-def hello():
-    count = get_hit_count()
-    return 'Olá alunos ADS17! Eu fui visto {} vezes.\n'.format(count)
+def visit_counter():
+    visits = cache.incr('visits')
+    return f"Esta página foi visitada {visits} vezes."
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8080, debug=True)
