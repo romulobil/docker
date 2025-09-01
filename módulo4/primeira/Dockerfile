@@ -1,9 +1,11 @@
-FROM python:3.7-alpine
-WORKDIR /code
-ENV FLASK_APP app.py
-ENV FLASK_RUN_HOST 0.0.0.0
-RUN apk add --no-cache gcc musl-dev linux-headers
-COPY requirements.txt requirements.txt
-RUN pip install -r requirements.txt
+FROM python:3.11-alpine3.17
+
+WORKDIR /app
 COPY . .
-CMD ["flask", "run"]
+RUN pip install --no-cache-dir -r requirements.txt
+
+ENV REDIS_HOST redis
+ENV REDIS_PORT 6379
+
+EXPOSE 8080
+CMD ["python", "app.py"]
