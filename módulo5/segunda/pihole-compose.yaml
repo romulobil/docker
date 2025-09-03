@@ -16,6 +16,8 @@ services:
     volumes:
       - pihole-config:/etc/pihole
       - pihole-dnsmasq:/etc/dnsmasq.d
+    ports:
+      - 80:80
     networks:
       internal:
         ipv4_address: 172.30.9.3
