@@ -1,0 +1,56 @@
+version: '3.9'
+
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:2023.03.1
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - cloudflared
+    environment:
+      - "TZ=America/Sao_Paulo"
+      - "WEBPASSWORD=admin"
+      - "DNS1=172.30.9.2#5053"
+      - "DNS2=no"
+      - "DNSMASQ_LISTENING=all"
+    volumes:
+      - pihole-config:/etc/pihole
+      - pihole-dnsmasq:/etc/dnsmasq.d
+    networks:
+      internal:
+        ipv4_address: 172.30.9.3
+      external:
+        ipv4_address: 192.168.68.20
+
+  cloudflared:
+    container_name: cloudflared
+    image: visibilityspots/cloudflared:v2023.4.2
+    restart: unless-stopped
+    environment:
+      - "UPSTREAM1=https://9.9.9.9/dns-query"
+      - "UPSTREAM2=https://149.112.112.9/dns-query"
+      - "PORT=5053"
+      - "ADDRESS=0.0.0.0"
+    networks:
+      internal:
+        ipv4_address: 172.30.9.2
+
+networks:
+  internal:
+    ipam:
+      config:
+        - subnet: 172.30.9.0/29
+  external:
+    driver: macvlan
+    driver_opts:
+      parent: eth1
+    ipam:
+      config:
+        - subnet: 192.168.68.0/24
+          gateway: 192.168.68.10
+
+volumes:
+  pihole-config:
+  pihole-dnsmasq:
